@@ -12,10 +12,6 @@ import { Container } from '@mui/material'
 const router = createHashRouter([
   {
     path: "jlcars",
-    element: <div>Hello world!</div>,
-  },
-  {
-    path: "jlcars/customer",
     element: <Customer />,
   },
   {
