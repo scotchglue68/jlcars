@@ -15,15 +15,15 @@ const router = createBrowserRouter([
     element: <div>Hello world!</div>,
   },
   {
-    path: "customer",
+    path: "jlcars/customer",
     element: <Customer />,
   },
   {
-    path: "service/:serviceId",
+    path: "jlcars/service/:serviceId",
     element: <Service />,
   },
   {
-    path: "vehicle/:vin",
+    path: "jlcars/vehicle/:vin",
     element: <Vehicle />,
   },
 ]);
