@@ -1,5 +1,5 @@
-import { rows as serviceRows, columns as serviceColumns, createService } from './service'
-import { rows as vehicleRows, columns as vehicleColumns, createVehicle } from './vehicle'
+import { columns as serviceColumns, createService } from './service'
+import { columns as vehicleColumns, createVehicle } from './vehicle'
 import Dexie from 'dexie';
 
 const db = new Dexie('CarsDatabase');
