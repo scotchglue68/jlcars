@@ -2,14 +2,14 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import './index.css'
 import { Customer, Service, Vehicle } from './pages'
-
 import {
-  createBrowserRouter,
-  RouterProvider,
-} from "react-router-dom";
+  createHashRouter,
+  RouterProvider
+} from 'react-router-dom';
+
 import { Container } from '@mui/material'
 
-const router = createBrowserRouter([
+const router = createHashRouter([
   {
     path: "jlcars",
     element: <div>Hello world!</div>,
