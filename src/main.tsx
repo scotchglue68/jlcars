@@ -11,7 +11,7 @@ import { Container } from '@mui/material'
 
 const router = createBrowserRouter([
   {
-    path: "/",
+    path: "jlcars",
     element: <div>Hello world!</div>,
   },
   {
