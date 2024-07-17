@@ -2,7 +2,7 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 
 import './index.css'
-import { Customer, Service, Vehicle, MenuAppBar } from './pages'
+import { Customer, Vehicle, MenuAppBar } from './pages'
 
 import { createHashRouter, RouterProvider } from 'react-router-dom';
 
@@ -18,10 +18,6 @@ const router = createHashRouter([
       {
         path: "customer",
         element: <Customer />,
-      },
-      {
-        path: "service/:serviceId",
-        element: <Service />,
       },
       {
         path: "vehicle/:vin",
