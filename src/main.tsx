@@ -1,37 +1,44 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
+
 import './index.css'
-import { Customer, Service, Vehicle } from './pages'
-import {
-  createHashRouter,
-  RouterProvider
-} from 'react-router-dom';
+import { Customer, Service, Vehicle, MenuAppBar } from './pages'
+
+import { createHashRouter, RouterProvider } from 'react-router-dom';
 
 import { Container } from '@mui/material'
+import { ThemeProvider } from "@mui/material";
+import { appTheme } from "./themes/theme";
 
 const router = createHashRouter([
   {
     path: "/",
-    element: <div>Hello world!</div>,
-  },
-  {
-    path: "customer",
-    element: <Customer />,
-  },
-  {
-    path: "service/:serviceId",
-    element: <Service />,
-  },
-  {
-    path: "vehicle/:vin",
-    element: <Vehicle />,
+    element: <MenuAppBar/>,
+    children: [
+      {
+        path: "customer",
+        element: <Customer />,
+      },
+      {
+        path: "service/:serviceId",
+        element: <Service />,
+      },
+      {
+        path: "vehicle/:vin",
+        element: <Vehicle />,
+      },
+    ]
   },
 ]);
 
+
+
+
+
 ReactDOM.createRoot(document.getElementById('root')!).render(
+  <ThemeProvider theme={appTheme}>
   <React.StrictMode>
-    <Container>
       <RouterProvider router={router} />
-    </Container>
-  </React.StrictMode>,
+  </React.StrictMode>
+  </ThemeProvider>
 )

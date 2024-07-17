@@ -1,5 +1,12 @@
 import { Grid, Button, Dialog, DialogActions, DialogContent, DialogContentText, TextField } from "@mui/material";
+
 import { useEffect, useState } from "react";
+import dayjs, { Dayjs } from 'dayjs';
+
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 
 
 export default function ServiceCreateDialog(props: { itemId: any; setItemId?: any; onSave: Function, defaultFormData: any}) {
@@ -23,6 +30,7 @@ export default function ServiceCreateDialog(props: { itemId: any; setItemId?: an
     const handleChange = (e: { target: { id: any; value: any; }; }) => {
       const {target: {id, value}} = e
       setFormData({...formData, [id]: value})
+      console.log(formData)
     }
 
     // const renderEditMode = () => {
@@ -38,28 +46,33 @@ export default function ServiceCreateDialog(props: { itemId: any; setItemId?: an
        Subscribe
      </DialogTitle> */}
      <DialogContent>
-       <DialogContentText>
-         To subscribe to this website, please enter your email address here. We
-         will send updates occasionally.
-       </DialogContentText>
+
        <Grid container spacing={2} display='flex'>
-        <Grid item>
-          <TextField disabled id="vin" label="VIN" variant="standard" value={formData.vin} onChange={handleChange}/>    
+        <Grid item xs={12}>
+        <DialogContentText>
+        Create a new Service
+        </DialogContentText>
         </Grid>
-        <Grid item>
-           <TextField id="name" label="Name" variant="standard" value={formData.name} onChange={handleChange}/>
+        <Grid item xs={12}>
+          <TextField disabled fullWidth id="vin" label="VIN" variant="filled" value={formData.vin} onChange={handleChange}/>    
+        </Grid>
+        <Grid item xs={12}>
+           <TextField fullWidth id="name" label="Service Name" variant="filled" value={formData.name} onChange={handleChange}/>
          </Grid>
-         <Grid item>
-           <TextField id="date" label="Date" variant="standard" value={formData.date}onChange={handleChange}/>
+
+         <Grid item xs={3}>
+           <TextField fullWidth id="price" label="Price" variant="filled" value={formData.price} onChange={handleChange}/>
          </Grid>
-         <Grid item>
-           <TextField id="price" label="Price" variant="standard" value={formData.price} onChange={handleChange}/>
+         <Grid item xs={3}>
+           <TextField fullWidth id="hours" label="Hours" variant="filled" value={formData.hours} onChange={handleChange}/>
          </Grid>
-         <Grid item>
-           <TextField id="hours" label="Hours" variant="standard" value={formData.hours} onChange={handleChange}/>
+         <Grid item xs={6}>
+         <LocalizationProvider dateAdapter={AdapterDayjs}>
+          <DatePicker label="Date Serviced" defaultValue={dayjs(formData.date)}/>
+          </LocalizationProvider>
          </Grid>
-         <Grid item>
-           <TextField id="notes" label="Notes" variant="standard" value={formData.notes} onChange={handleChange}/>
+         <Grid item xs={12}>
+           <TextField fullWidth id="notes" label="Notes" variant="filled" value={formData.notes} onChange={handleChange} multiline rows={4}/>
          </Grid>
        </Grid>
      </DialogContent>

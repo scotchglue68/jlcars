@@ -3,6 +3,7 @@ interface Vehicle {
     vin: string;
     make: string;
     model: string;
+    notes: string;
   }
   
   function createVehicle(
@@ -10,12 +11,13 @@ interface Vehicle {
     vin: string,
     make: string,
     model: string,
+    notes: string
   ): Vehicle {
-    return { name, vin, make, model};
+    return { name, vin, make, model, notes};
   }
 
 interface Column {
-    id: 'vin' | 'name' | 'make' | 'model';
+    id: 'vin' | 'name' | 'make' | 'model' | 'notes';
     label: string;
     minWidth?: number;
     align?: 'right';
@@ -29,15 +31,18 @@ interface Column {
       id: 'make',
       label: 'Make',
       minWidth: 170,
-      align: 'right',
       format: (value: number) => value.toLocaleString('en-US'),
     },
     {
       id: 'model',
       label: 'Model',
       minWidth: 170,
-      align: 'right',
       format: (value: number) => value.toLocaleString('en-US'),
+    },
+    {
+      id: 'notes',
+      label: 'Notes',
+      minWidth: 170,
     },
   ];
 

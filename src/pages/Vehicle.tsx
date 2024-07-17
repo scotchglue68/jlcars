@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Button, Typography } from "@mui/material";
+import { Box, Button, Grid, Stack, Typography } from "@mui/material";
 import { useParams, useNavigate, } from "react-router-dom";
 import { Table } from "../components";
 import { serviceColumns } from "../models"
@@ -13,13 +13,16 @@ export default function Vehicle() {
     const {vin} = useParams()
     const [dialogId, setDialogId] = useState('')
 
-    const vehicle = useLiveQuery(() => db.vehicles.where('vin').equals(vin).first()) || {};
-    let serviceRows = useLiveQuery(() => db.services.where('vin').equals(vin).toArray()) || [];
+    const vehicle = useLiveQuery(() => db.table('vehicles').where('vin').equals(vin).first()) || {};
+    let serviceRows = useLiveQuery(() => db.table('services').where('vin').equals(vin).toArray()) || [];
 
     const handleDeleteVehicle = async () => {
-        let res = await db.vehicles.where("vin").equals(vin).delete()
+        let res = await db.table('vehicles').where("vin").equals(vin).delete()
+        let res2 = await db.table('services').where("vin").equals(vin).delete()
+        console.log('DELETING')
         console.log(res)
-        res > 0 && navigate('/customer')
+        console.log(res2)
+        navigate('/customer')
     }
 
     const handleDialogToggle = () => {
@@ -29,7 +32,7 @@ export default function Vehicle() {
     const handleServiceCreate = async (data: any) => {
         const { name, vin, date, price, hours, notes } = data;
         console.log(data)
-        const id = await db.services.add({vin, name, date, price, hours, notes});
+        const id = await db.table('services').add({vin, name, date, price, hours, notes});
         console.log(id)
         return false
     }
@@ -40,33 +43,38 @@ export default function Vehicle() {
         setDialogId(serviceId)
     }
 
-    const {name, make, model} = vehicle
+    const {name, make, model, notes} = vehicle
 
     return (
-       <div>
-                <Typography variant={'h1'} color={'gray'}>{vin}</Typography><Typography>{name}</Typography>
-                <Typography>{make}</Typography>
-                <Typography>{model}</Typography>
+    <Stack spacing={3}>
+        <Typography variant={'h2'} >{`${name}'s ${make} ${model}`}</Typography>
+        <Typography variant={'h4'} color={'gray'}>VIN: {vin}</Typography>
+        {
+            notes && <div> 
                 <Typography variant={'h5'}>Notes:</Typography>
-                <Typography variant={'body2'}> the notes go here the notes</Typography>
+                <Typography variant={'body2'}>{notes}</Typography> 
+                </div>
+        }
 
-                <Typography variant={'h2'}>Services</Typography>
-                <Button onClick={handleDialogToggle}>Create Service</Button>
-                <Table rows={serviceRows} columns={serviceColumns} handleDoubleClick={handleServiceClick}/>
-                <ServiceCreateDialog 
-                    itemId={dialogId} 
-                    setItemId={setDialogId} 
-                    onSave={handleServiceCreate}
-                    defaultFormData={{
-                        name: '',
-                        vin,
-                        date: '',
-                        price: '',
-                        hours: '',
-                        notes: '',
-                    }}
-                    />
-                <Button onClick={handleDeleteVehicle}>Delete Vehicle</Button>
-       </div>
+        <Box>
+        <Button onClick={handleDialogToggle} sx={{float: 'right', marginBottom: 1}}>Create Service</Button>
+        <Table rows={serviceRows} columns={serviceColumns} handleDoubleClick={handleServiceClick}/>
+        <ServiceCreateDialog 
+            itemId={dialogId} 
+            setItemId={setDialogId} 
+            onSave={handleServiceCreate}
+            defaultFormData={{
+                name: '',
+                vin,
+                date: (new Date).toISOString().split('T')[0],
+                price: '',
+                hours: '',
+                notes: '',
+            }}
+            />
+        </Box>
+        <Button variant={'outlined'} onClick={handleDeleteVehicle} size='medium' sx={{color:'red', outlineColor: 'red'}}>Delete Vehicle</Button>
+
+    </Stack>
     )
    }

@@ -4,16 +4,14 @@ import Dexie from 'dexie';
 
 const db = new Dexie('CarsDatabase');
 db.version(1).stores({
-    vehicles: '++vin, name, make, model',
+    vehicles: '++vin, name, make, model, notes',
     services: '++id, name, vin, date, price, hours, notes'
 });
   
 
 
 export {
-    serviceRows,
     serviceColumns,
-    vehicleRows,
     vehicleColumns,
     createVehicle,
     createService,

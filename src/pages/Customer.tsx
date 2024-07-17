@@ -12,15 +12,15 @@ export default function Customer() {
     const navigate = useNavigate();
 
     const [dialogId, setDialogId] = useState('')
-    let vehicleRows = useLiveQuery(() => db.vehicles.toArray()) || [];
+    let vehicleRows = useLiveQuery(() => db.table('vehicles').toArray()) || [];
 
     const handleDialogToggle = () => {
         setDialogId('create')
     }
 
-    const handleVehicleCreate = async (data: {vin: string, name: string, make: string, model: string}) => {
-        const { vin, name, make, model } = data;
-        const id = await db.vehicles.add({vin, name, make, model});
+    const handleVehicleCreate = async (data: {vin: string, name: string, make: string, model: string, notes: string}) => {
+        const { vin, name, make, model, notes } = data;
+        const id = await db.table('vehicles').add({vin, name, make, model, notes});
         console.log(id)
         return false
     }
@@ -35,7 +35,7 @@ export default function Customer() {
     return (
         <div>
             <h1>Vehicles</h1>
-            <Button onClick={handleDialogToggle}>Add Vehicle</Button>
+            <Button onClick={handleDialogToggle} sx={{float: 'right', marginBottom: 1}}>Add Vehicle</Button>
             <Table rows={vehicleRows} columns={vehicleColumns} handleDoubleClick={handleServiceClick}/>
             <VehicleCreateDialog itemId={dialogId} setItemId={setDialogId} onSave={handleVehicleCreate}/>
         </div>

@@ -12,6 +12,7 @@ export default function VehicleCreateDialog(props: { itemId: any; setItemId?: an
       name: '',
       make: '',
       model: '',
+      notes: '',
     })
 
     const handleCancel = () => {
@@ -42,22 +43,24 @@ export default function VehicleCreateDialog(props: { itemId: any; setItemId?: an
           Subscribe
         </DialogTitle> */}
         <DialogContent>
-          <DialogContentText>
-            To subscribe to this website, please enter your email address here. We
-            will send updates occasionally.
-          </DialogContentText>
           <Grid container spacing={2} display='flex'>
-            <Grid item>
-              <TextField id="vin" label="VIN" variant="standard" value={formData.vin} onChange={handleChange}/>    
+          <Grid item xs={12}>
+              <DialogContentText>Create new Vehicle</DialogContentText>  
             </Grid>
-            <Grid item>
-              <TextField id="name" label="Name" variant="standard" value={formData.name} onChange={handleChange}/>
+            <Grid item xs={12}>
+              <TextField fullWidth id="vin" label="VIN" variant="filled" value={formData.vin} onChange={handleChange}/>    
             </Grid>
-            <Grid item>
-              <TextField id="make" label="Make" variant="standard" value={formData.make}onChange={handleChange}/>
+            <Grid item xs={12}>
+              <TextField fullWidth id="name" label="Name" variant="filled" value={formData.name} onChange={handleChange}/>
             </Grid>
-            <Grid item>
-              <TextField id="model" label="Model" variant="standard" value={formData.model} onChange={handleChange}/>
+            <Grid item xs={12}>
+              <TextField fullWidth id="make" label="Make" variant="filled" value={formData.make}onChange={handleChange}/>
+            </Grid>
+            <Grid item xs={12}>
+              <TextField fullWidth id="model" label="Model" variant="filled" value={formData.model} onChange={handleChange}/>
+            </Grid>
+            <Grid item xs={12}>
+              <TextField fullWidth id="notes" label="Notes" variant="filled" value={formData.notes} onChange={handleChange} multiline rows={4}/>
             </Grid>
           </Grid>
         </DialogContent>
