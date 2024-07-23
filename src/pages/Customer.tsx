@@ -5,17 +5,25 @@ import { useState } from 'react'
 import { VehicleCreateDialog } from '../components'
 import { db } from '../models'
 import { useLiveQuery } from 'dexie-react-hooks'
-import { useParams, useNavigate, } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 
 export default function Customer() {
     const navigate = useNavigate();
+    const emptyVehicleForm = {
+        vin: '',
+        name: '',
+        make: '',
+        model: '',
+        notes: '',
+    }
 
-    const [dialogId, setDialogId] = useState('')
+    const [showVehicleDialog, setShowVehicleDialog] = useState(false)
+
     let vehicleRows = useLiveQuery(() => db.table('vehicles').toArray()) || [];
 
     const handleDialogToggle = () => {
-        setDialogId('create')
+        setShowVehicleDialog(true)
     }
 
     const handleVehicleCreate = async (data: {vin: string, name: string, make: string, model: string, notes: string}) => {
@@ -36,8 +44,15 @@ export default function Customer() {
         <div>
             <h1>Vehicles</h1>
             <Button onClick={handleDialogToggle} sx={{float: 'right', marginBottom: 1}}>Add Vehicle</Button>
-            <Table rows={vehicleRows} columns={vehicleColumns} handleDoubleClick={handleServiceClick}/>
-            <VehicleCreateDialog itemId={dialogId} setItemId={setDialogId} onSave={handleVehicleCreate}/>
+            <Table rows={vehicleRows} columns={vehicleColumns} handleDoubleClick={handleServiceClick} primaryKey={'vin'}/>
+            <VehicleCreateDialog 
+                itemId='create' 
+                mode='create'
+                onSave={handleVehicleCreate}
+                show={showVehicleDialog}
+                setShow={setShowVehicleDialog}
+                defaultFormData={emptyVehicleForm}
+                />
         </div>
 
     )

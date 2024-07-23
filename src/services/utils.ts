@@ -1,5 +1,5 @@
 // Function to download the CSV file
-const download = (data: string) => {
+const download = (data: string, name: string) => {
     // Create a Blob with the CSV data and type
     const blob = new Blob([data], { type: 'text/csv' });
     
@@ -11,7 +11,7 @@ const download = (data: string) => {
     
     // Set the URL and download attribute of the anchor tag
     a.href = url;
-    a.download = 'download.csv';
+    a.download = name;
     
     // Trigger the download by clicking the anchor tag
     a.click();
@@ -20,7 +20,7 @@ const download = (data: string) => {
 // Function to create a CSV string from an object
 const csvmaker = (data: Array<any>) => {
     const headers = Object.keys(data[0]);
-    const csvString = data.reduce((prev, rowItem) =>  prev + '\n' + Object.values(rowItem).join(','), headers.join(','))
+    const csvString = data.reduce((prev, rowItem) =>  prev + '\n' + Object.values(rowItem).join(',').replace('\n', '\\n'), headers.join(','))
     return csvString
 }
 

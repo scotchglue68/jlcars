@@ -12,7 +12,7 @@ import { Typography } from '@mui/material';
 
 export default function StickyHeadTable(props) {
 
-  const {rows, columns, handleDoubleClick} = props
+  const {rows, columns, handleDoubleClick, primaryKey} = props
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
   const [filters, setFilters] = React.useState({})
@@ -59,7 +59,7 @@ export default function StickyHeadTable(props) {
   }
 
   const renderRow = (row) =>
-            <TableRow hover role="checkbox" tabIndex={-1} key={row.vin} itemID={row.vin} item={row} onDoubleClick={handleDoubleClick}>
+            <TableRow hover role="checkbox" tabIndex={-1} key={row[primaryKey]} itemID={row[primaryKey]} item={row} onDoubleClick={handleDoubleClick}>
                 {
                     columns.map((column: any) => {
                         const value = row[column.id];

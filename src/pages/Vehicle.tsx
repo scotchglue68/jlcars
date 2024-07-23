@@ -1,28 +1,51 @@
 import { useState } from "react";
-import { Box, Button, Grid, Stack, Typography } from "@mui/material";
+import { Box, Button, IconButton, Stack, Typography } from "@mui/material";
 import { useParams, useNavigate, } from "react-router-dom";
 import { Table } from "../components";
 import { serviceColumns } from "../models"
 import { ServiceCreateDialog } from '../components'
+import { VehicleCreateDialog } from '../components'
 import { db } from '../models'
 import { useLiveQuery } from 'dexie-react-hooks'
+import { v4 as uuidv4 } from 'uuid';
+import EditIcon from '@mui/icons-material/Edit';
 
 export default function Vehicle() {
+    const {vin} = useParams()
+    const emptyFormDefault = {
+        name: '',
+        vin,
+        date: (new Date).toISOString().split('T')[0],
+        price: '',
+        hours: '',
+        notes: '',
+    }
     const navigate = useNavigate();
 
-    const {vin} = useParams()
     const [dialogId, setDialogId] = useState('')
+    const [defaultFormData, setDefaultFormData] = useState(emptyFormDefault)
+    const [showVehicleDialog, setShowVehicleDialog] = useState(false)
 
-    const vehicle = useLiveQuery(() => db.table('vehicles').where('vin').equals(vin).first()) || {};
+    const vehicle = useLiveQuery(() => db.table('vehicles').where('vin').equals(vin).first());
     let serviceRows = useLiveQuery(() => db.table('services').where('vin').equals(vin).toArray()) || [];
 
-    const handleDeleteVehicle = async () => {
-        let res = await db.table('vehicles').where("vin").equals(vin).delete()
-        let res2 = await db.table('services').where("vin").equals(vin).delete()
-        console.log('DELETING')
-        console.log(res)
-        console.log(res2)
-        navigate('/customer')
+    const handleVehicleEdit = () => {
+        setShowVehicleDialog(true)
+    }
+    const handleVehicleUpdate = (id: string, data: any) => {
+        db.table('vehicles').update(id, data).then(function (updated) {
+            if (updated) console.log ("Vehicle has been updated");
+            else console.log (`No vehicle with id ${id}`);
+          });
+    }
+
+    const handleVehicleDelete = async () => {
+        db.transaction("rw", db.table('vehicles'), db.table('services'), () => {
+            db.table('vehicles').where("vin").equals(vin).delete()
+            db.table('services').where("vin").equals(vin).delete()
+        }).then(() => {
+            navigate('/customer')
+        })
     }
 
     const handleDialogToggle = () => {
@@ -31,23 +54,58 @@ export default function Vehicle() {
 
     const handleServiceCreate = async (data: any) => {
         const { name, vin, date, price, hours, notes } = data;
-        console.log(data)
-        const id = await db.table('services').add({vin, name, date, price, hours, notes});
-        console.log(id)
+        const serviceId = uuidv4().toString();
+        db.table('services').add({serviceId, vin, name, date, price, hours, notes}).then((res) => {
+            console.log(res)
+            setDialogId('')
+        });
         return false
     }
-
-    const handleServiceClick = (e: { preventDefault: () => void; currentTarget: { getAttribute: (arg0: string) => any; }; }) => {
-        e.preventDefault()
-        const serviceId = e.currentTarget.getAttribute('itemid')
-        setDialogId(serviceId)
+    const handleServiceEdit = async (id: string, data: any) => {
+        db.table('services').update(id, data).then(function (updated) {
+            if (updated){
+              console.log ("Service has been updated");
+            setDefaultFormData(emptyFormDefault)
+            setDialogId('')
+        }
+            else
+              console.log (`No service with id ${id}`);
+          });
     }
 
-    const {name, make, model, notes} = vehicle
+    const handleServiceClick = async (e: { preventDefault: () => void; currentTarget: { getAttribute: (arg0: string) => any; }; }) => {
+        e.preventDefault()
+        const serviceId = e.currentTarget.getAttribute('itemid')
+        db.table('services').where('serviceId').equals(serviceId).first().then((service) => {
+            const { name, vin, date, price, hours, notes } = service;
+            setDefaultFormData({ name, vin, date, price, hours, notes })
+            setDialogId(serviceId)
+        })
 
-    return (
-    <Stack spacing={3}>
-        <Typography variant={'h2'} >{`${name}'s ${make} ${model}`}</Typography>
+    }
+    const onDelete = (serviceId: string) => {
+        db.table('services').where('serviceId').equals(serviceId).delete().then((res) => {
+            setDefaultFormData(emptyFormDefault)
+            console.log(res)
+            return true
+        })
+
+    }
+
+    const onCancel = () => {
+        setDialogId('')
+        setDefaultFormData(emptyFormDefault)
+    }
+
+    const renderVehicleInfo = () => {
+        if (!vehicle) return <p>Loading...</p>
+        const {name, make, model, notes} = vehicle
+        return         <Stack spacing={1}>
+        <Typography variant={'h2'} >{`${name}'s ${make} ${model}`}
+        <IconButton onClick={handleVehicleEdit}><EditIcon/></IconButton>
+
+        </Typography>
+
         <Typography variant={'h4'} color={'gray'}>VIN: {vin}</Typography>
         {
             notes && <div> 
@@ -55,25 +113,35 @@ export default function Vehicle() {
                 <Typography variant={'body2'}>{notes}</Typography> 
                 </div>
         }
+        </Stack>
+    }
 
+
+    return (
+    <Stack spacing={3}>
+        {renderVehicleInfo()}
         <Box>
         <Button onClick={handleDialogToggle} sx={{float: 'right', marginBottom: 1}}>Create Service</Button>
-        <Table rows={serviceRows} columns={serviceColumns} handleDoubleClick={handleServiceClick}/>
+        <Table rows={serviceRows} columns={serviceColumns} handleDoubleClick={handleServiceClick} primaryKey={'serviceId'}/>
+        {   vehicle &&
+            <VehicleCreateDialog
+            mode='edit'
+            itemId={vin}
+            defaultFormData={vehicle}
+            onEditSave={handleVehicleUpdate}
+            show={showVehicleDialog}
+            setShow={setShowVehicleDialog}
+        />}
         <ServiceCreateDialog 
             itemId={dialogId} 
-            setItemId={setDialogId} 
+            defaultFormData={defaultFormData}
             onSave={handleServiceCreate}
-            defaultFormData={{
-                name: '',
-                vin,
-                date: (new Date).toISOString().split('T')[0],
-                price: '',
-                hours: '',
-                notes: '',
-            }}
+            onCancel={onCancel}
+            onDelete={onDelete}
+            onEditSave={handleServiceEdit}
             />
         </Box>
-        <Button variant={'outlined'} onClick={handleDeleteVehicle} size='medium' sx={{color:'red', outlineColor: 'red'}}>Delete Vehicle</Button>
+        <Button variant={'outlined'} onClick={handleVehicleDelete} size='medium' sx={{color:'red', outlineColor: 'red'}}>Delete Vehicle</Button>
 
     </Stack>
     )

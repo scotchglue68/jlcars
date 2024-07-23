@@ -43,7 +43,7 @@ interface Column {
       id: 'notes',
       label: 'Notes',
       minWidth: 170,
-    },
+      },
   ];
 
 

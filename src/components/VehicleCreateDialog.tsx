@@ -2,26 +2,17 @@ import { Grid, Button, Dialog, DialogActions, DialogContent, DialogContentText, 
 import { useEffect, useState } from "react";
 
 
-export default function VehicleCreateDialog(props: { itemId: any; setItemId?: any; onSave: Function}) {
-    const { itemId, setItemId, onSave } = props;
-    // const [editMode, setEditMode] = useState(itemId === "create");
-    const [open, setOpen] = useState(false)
-    useEffect(() => itemId ? setOpen(true) : setOpen(false), [props.itemId]);
-    const [formData, setFormData] = useState({
-      vin: '',
-      name: '',
-      make: '',
-      model: '',
-      notes: '',
-    })
+export default function VehicleCreateDialog(props) {
+    const { itemId, mode, show, setShow, onSave, onEditSave, defaultFormData } = props;
+    const [formData, setFormData] = useState(defaultFormData)
+    console.log(formData)
 
-    const handleCancel = () => {
-        setItemId('')
-    }
+    const handleCancel = () => setShow(false)
 
     const handleSave = () => {
-      const success = onSave(formData)
-      success && setItemId('')
+      if (mode === 'create' ) {onSave(formData)}
+      else if (mode === 'edit') { onEditSave(itemId, formData)}
+      setShow(false)
     }
     
     const handleChange = (e: { target: { id: any; value: any; }; }) => {
@@ -38,7 +29,7 @@ export default function VehicleCreateDialog(props: { itemId: any; setItemId?: an
 
     return (
            <Dialog
-            aria-labelledby="draggable-dialog-title" open={open}      >
+            aria-labelledby="draggable-dialog-title" open={show}      >
         {/* <DialogTitle style={{ cursor: 'move' }} id="draggable-dialog-title">
           Subscribe
         </DialogTitle> */}

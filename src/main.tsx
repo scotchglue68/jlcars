@@ -5,8 +5,6 @@ import './index.css'
 import { Customer, Vehicle, MenuAppBar } from './pages'
 
 import { createHashRouter, RouterProvider } from 'react-router-dom';
-
-import { Container } from '@mui/material'
 import { ThemeProvider } from "@mui/material";
 import { appTheme } from "./themes/theme";
 
@@ -26,10 +24,6 @@ const router = createHashRouter([
     ]
   },
 ]);
-
-
-
-
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <ThemeProvider theme={appTheme}>
