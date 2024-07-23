@@ -25,7 +25,8 @@ export default function MenuAppBar() {
 
 
     const renderCleanDatabase = () => {
-      return <Tooltip title="This is mostly for debugging and if your data is causing you issues. DO NOT USE BEFORE BACKING UP IMPORTANT DATA. Double click to wipe your databases.">
+      return <Tooltip title="Use this if your data is causing you issues between version changes. 
+      DO NOT USE BEFORE BACKING UP IMPORTANT DATA. Double click to wipe your database.">
           <Button onDoubleClick={()=> {
             db.delete()
             navigate('/customer') 
