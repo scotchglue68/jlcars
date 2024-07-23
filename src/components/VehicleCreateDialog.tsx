@@ -2,7 +2,7 @@ import { Grid, Button, Dialog, DialogActions, DialogContent, DialogContentText, 
 import { useEffect, useState } from "react";
 
 
-export default function VehicleCreateDialog(props) {
+export default function VehicleCreateDialog(props: any) {
     const { itemId, mode, show, setShow, onSave, onEditSave, defaultFormData } = props;
     const [formData, setFormData] = useState(defaultFormData)
     console.log(formData)
@@ -13,19 +13,13 @@ export default function VehicleCreateDialog(props) {
       if (mode === 'create' ) {onSave(formData)}
       else if (mode === 'edit') { onEditSave(itemId, formData)}
       setShow(false)
+      setFormData(defaultFormData)
     }
     
     const handleChange = (e: { target: { id: any; value: any; }; }) => {
       const {target: {id, value}} = e
       setFormData({...formData, [id]: value})
     }
-
-    // const renderEditMode = () => {
-    // }
-
-    // const renderViewMode = () => {
-    // }
-
 
     return (
            <Dialog
